@@ -1,0 +1,9 @@
+
+GET http://localhost:5000/api/skills
+
+###
+
+POST http://localhost:5000/api/skills
+Content-Type: application/json
+
+{ "name": "NodeJS" }
