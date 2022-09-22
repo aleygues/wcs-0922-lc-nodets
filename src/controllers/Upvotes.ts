@@ -5,23 +5,28 @@ import { Upvote } from "../entities/Upvote";
 export default {
   create: async (req: Request, res: Response): Promise<void> => {
     const repository = datasource.getRepository(Upvote);
+    const upvotes: Upvote[] = [];
 
-    const exitingUpvote = await repository.findOne({
-      where: {
-        skill: { id: req.body.skillId },
-        wilder: { id: req.body.wilderId },
-      },
-    });
-
-    if (exitingUpvote !== null) {
-      res.json(exitingUpvote);
-    } else {
-      const upvote = await repository.save({
-        wilder: { id: req.body.wilderId },
-        skill: { id: req.body.skillId },
+    for (const skillId of req.body.skillsIds) {
+      const exitingUpvote = await repository.findOne({
+        where: {
+          skill: { id: skillId },
+          wilder: { id: req.body.wilderId },
+        },
       });
-      res.json(upvote);
+
+      if (exitingUpvote !== null) {
+        upvotes.push(exitingUpvote);
+      } else {
+        const upvote = await repository.save({
+          wilder: { id: req.body.wilderId },
+          skill: { id: skillId },
+        });
+        upvotes.push(upvote);
+      }
     }
+
+    res.json(upvotes);
   },
   upvote: async (req: Request, res: Response): Promise<void> => {
     const repository = datasource.getRepository(Upvote);

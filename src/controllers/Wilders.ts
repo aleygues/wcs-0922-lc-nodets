@@ -4,7 +4,7 @@ import { Wilder } from "../entities/Wilder";
 
 export default {
   create: (req: Request, res: Response): void => {
-    const repository = datasource.getRepository("Wilder");
+    const repository = datasource.getRepository(Wilder);
 
     repository
       .query("INSERT INTO wilder(name) VALUES (?)", [req.body.name])
@@ -24,7 +24,7 @@ export default {
       );
   },
   findAll: (req: Request, res: Response): void => {
-    const repository = datasource.getRepository("Wilder");
+    const repository = datasource.getRepository(Wilder);
 
     repository.find({ relations: ["upvotes", "upvotes.skill"] }).then(
       (data) => {
@@ -63,6 +63,10 @@ export default {
       const updatedWilder = await repository.save(wilder, { reload: true });
       res.json(updatedWilder);
     }
+  },
+  deleteAll: async (req: Request, res: Response): Promise<void> => {
+    const repository = datasource.getRepository(Wilder);
+    await repository.clear();
   },
   delete: (req: Request, res: Response): void => {
     /**
